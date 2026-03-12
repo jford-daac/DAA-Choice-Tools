@@ -184,7 +184,6 @@ pref=010-1--
 ```
 The position of each value in the string corresponds to a category defined in the TokenChoices category JSON taxonomy. Access to this JSON file is provided to program participants. 
 
----
 
 ## Request Format
 

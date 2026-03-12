@@ -1,4 +1,4 @@
-# Token Tool Implementation Instructions
+# TokenChoices Implementation Instructions
 
 The TokenChoices tool enables consumers to exercise transparency and control over the use of tokenized identifiers in interest-based advertising (IBA). These identifiers may include hashed email addresses or hashed phone numbers used by participating companies within digital advertising environments.
 

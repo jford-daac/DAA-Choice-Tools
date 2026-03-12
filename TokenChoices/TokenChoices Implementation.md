@@ -8,11 +8,11 @@ The DAA's TokenChoices tool provides participating companies with a mechanism to
 
 [Onboarding to TokenChoices](#onboarding-to-tokenchoices)
 
-[User Flow 1: Opt-Out / Consent Revocation](#user-flow-1-opt-out-consent-revocation)
+[User Flow 1: Token Opt-Out / Consent Revocation](#user-flow-1-token-opt-out--consent-revocation)
 
 [User Flow 2: Category Preferences](#user-flow-2-category-preferences)
 
-[Shared API Parameters](#shared-api-parameters)
+[API Parameters](#api-parameters)
 
 [Example Requests](#example-requests)
 
@@ -47,14 +47,14 @@ TokenChoices allows consumers to exercise control over the use of these token id
 Below you will find a checklist of what needs to be accomplished in order to successfully integrate with TokenChoices:
 
 1. Please ensure that your company has executed and has an active DAA TokenChoices Agreement or has a tool addendum in place.
-2. Provide the DAA with your onboarding information (company name, logo, company description, and requested URLs).
-3. Create the opt-out URL to receive IDs.
-4. DAA will schedule a testing time frame for your URLs to ensure you are receiving the opt-out request correctly. During this time, there will be more back-and-forth communication between the DAA and your company to ensure that, when the opt-out request is sent, you receive the correct ID(s).
-5. Integration completed. If you receive the ID(s) correctly, then integration is complete. If you do not receive ID(s) correctly, we will have to work through the issue(s).
+2. Provide the DAA with your onboarding information (company name, logo, company description, main contact).
+3. Create and share your company's endpoint(s) with the DAA.
+4. The DAA will schedule a testing time frame to ensure integration is working correctly. During this time, there will be more back-and-forth communication between the DAA and your company.
+5. Integration completed. If you receive the tokens correctly, then integration is complete. If you do not receive tokens correctly, we will have to work through the issue(s).
 
 Once the necessary agreement is in place between your company and the DAA, the TokenChoices technical integration process can be initiated.
 
-## User Flow 1: Opt-Out / Consent Revocation
+## User Flow 1: Token Opt-Out / Consent Revocation
 
 ### Purpose
 
@@ -71,11 +71,11 @@ Future identifier types may be supported over time.
 ### Scope of Opt-Out
 
 An opt-out request applies to:
-- Interest-based advertising conducted using the submitted token identifier
+- Interest-based advertising conducted using the submitted token identifier.
 
 An opt-out request does not apply to:
-- Other identifiers such as cookies or mobile advertising IDs
-- Non-IBA purposes permitted under the DAA Principles
+- Other identifiers such as cookies or mobile advertising IDs.
+- Non-IBA purposes permitted under the DAA Principles.
 
 Consumers may exercise choices for other identifiers through [WebChoices](/WebChoices/) or [AppChoices](/AppChoices/).
 
@@ -101,44 +101,90 @@ For each category, consumers may signal:
 |----|----|
 | 0 | Limit / Opt-out of category |
 | 1 | Allow category |
-| - | No preference |
+| - | No preference (default state; no category selected) |
 
-Category signals are currently implemented on a **best-effort basis** as industry capabilities mature.
+Category signals are currently implemented on a **best-effort basis** as industry capabilities mature. Individual companies' algorithms/processes may determine the exact details of preferences. If companies are unable to apply a consumer's advertising preferences, they may apply as an opt-out to all.
 
-## Shared API Parameters
 
-Both TokenChoices user flows use the same core API parameters:
+## API Parameters
 
-**action**
+TokenChoices requests include several parameters that allow participating companies to interpret the consumer request.
 
-Defines the type of request.
+Both user flows use the same core API parameters:
+
+---
+
+```
+action
+```
+
+Defines the type of consumer request being transmitted.
+
+Supported values include:
+
+| **Value** | **Meaning** |
+|----|----|
+| optout | Consumer requests to opt out of interest-based advertising using the submitted token identifier. |
+| prefString | Consumer category preferences are provided in the pref parameter. |
 
 *Examples:*
 ```
 action=opt-out
-action=revoke
 action=prefString
 ```
+For the Opt-Out / Consent Revocation user flow, the action parameter is set to **opt-out by default**.
 
-**idt**
+Future implementations may support additional actions such as opt-in, revoke, or other signals.
 
-Identifier type.
+---
+
+```
+idt
+```
+
+Defines the identifier type submitted by the consumer.
+
+The identifier represents the tokenized input (such as a hashed email address or hashed phone number) used by participating companies for interest-based advertising.
+
+Supported values include:
+
+| **Value** | **Meaning** |
+|----|----|
+| email | The consumer submitted an email address that has been converted into hashed email tokens. |
+| phone | The consumer submitted a phone number that has been converted into hashed phone tokens. |
 
 *Examples:*
 ```
 idt=email
 idt=phone
 ```
+Additional identifier types may be supported in the future as new identity frameworks emerge.
 
-**pref**
+---
 
-Preference string used for category signals.
+```
+pref
+```
+
+Defines the preference string used to communicate consumer category preferences.
+
+This parameter is used only in the **Category Preferences** user flow.
+
+Supported values include:
+
+| **Value** | **Meaning** |
+|----|----|
+| null | No category preferences are provided. Used in the Opt-Out / Consent Revocation user flow. |
+| prefString | Encoded string representing consumer category preferences. |
 
 *Examples:*
 ```
 pref=null
 pref=010-1--
 ```
+The position of each value in the string corresponds to a category defined in the TokenChoices category JSON taxonomy. Access to this JSON file is provided to program participants. 
+
+---
 
 ## Request Format
 
@@ -220,6 +266,18 @@ The preference string represents category selections made by the consumer.
 
 Category positions and definitions are available in JSON format. Please ask your DAA representative for access to the file.
 
+
+### Optional Authentication Headers ###
+
+If additional authentication is required for your POST endpoint, companies may include authentication headers such as an API key. If authentication headers are used, the header format must be provided to the DAA during onboarding.
+
+Example header format:
+```
+Header:
+x-api-key: AAAAAAAAAAAAAAAA0000000000000000
+```
+
+
 ## Frequently Asked Questions
 
 **1. What hashing formats are supported?**
@@ -240,6 +298,8 @@ Currently supported identifier types include:
 - Email (idt=email)
 - Phone (idt=phone)
 
+Phone number identifiers will be sent as a ten character string, which will then be hashed.
+
 Additional identifier types may be supported in the future as new identity frameworks emerge. 
 
 **3. Does an opt-out apply to all identifiers?**
@@ -251,7 +311,6 @@ Consumers must use other DAA tools to control additional identifiers:
 - WebChoices for browser cookies
 - AppChoices for mobile advertising IDs
 
-
 **4. How should companies handle category preference signals?**
 
 Category preferences are currently provided on a best-effort basis as the ecosystem continues to develop mechanisms for responding to these signals. Companies should interpret the preference string (pref) and apply the consumer's preferences where technically feasible. 
@@ -262,11 +321,37 @@ The current category list is available in machine-readable JSON format. This lis
 
 **6. Can consumers submit multiple identifiers at once?**
 
-No. The TokenChoices interface accepts only one email address or phone number per submission. Consumers must repeat the process for additional identifiers. 
+No. The TokenChoices interface accepts only one email address or phone number per submission. Consumers must repeat the process for additional identifiers. Additionally, if a consumer revisits TokenChoices and resubmits the same identifier, their most recent choices may overrule their previous submission(s).
 
 **7. Can companies add authentication to their endpoints?**
 
-Yes. Companies may add authentication mechanisms such as API keys to their endpoints if required for security.
+Yes. The DAA supports and recommends that participating companies protect their endpoints using authentication mechanisms such as API keys.
+
+**8. Are clear-text email addresses or phone numbers transmitted?**
+
+No. TokenChoices never transmits clear-text identifiers. Email addresses and phone numbers are converted to hashed tokens before being transmitted to participating companies. Phone numbers are transmitted as a ten-digit string before hashing.
+
+**9. Are email identifiers normalized before hashing?**
+
+Yes. Email addresses submitted by consumers are converted to lowercase before hashing to ensure consistent token generation.
+
+**10. Does the DAA store user-submitted identifiers?**
+
+No. TokenChoices does not retain consumer-submitted identifiers beyond operational needs. Inputs are not stored for more than 30 days.
+
+**11. How does the tool protect against automated or fraudulent submissions?**
+
+TokenChoices incorporates several safeguards, including:
+
+- CAPTCHA validation during consumer submissions
+- Verification of email or phone ownership (for example, one-time passwords or verification links)
+- Throttling mechanisms to limit automated requests
+
+Companies may also monitor submission volumes at their endpoints to detect potential abuse.
+
+**12. Can consumer choices be updated?**
+
+Yes. If a consumer revisits the TokenChoices interface and submits a new request, the most recent request may override previous submissions.
 
 
 ## Relationship to Other DAA Choice Tools

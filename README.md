@@ -7,7 +7,7 @@ This GitHub repository serves as a centralized resource for technical specificat
 The DAA provides a set of interoperable tools that enable consumers to exercise choice across different identifier environments used in digital advertising, including browser-based, mobile, and token-based identifiers.
 
 <div align="center">
-  <img src="https://assets.youradchoices.ca/github/tools.png" alt="DAA Tools Overview">
+  <img src="https://assets.youradchoices.ca/github/toolsoverview.png" alt="DAA Consumer Choice Framework Across Identifier Environments">
 </div>
 
 ## DAA Choice Tools Overview

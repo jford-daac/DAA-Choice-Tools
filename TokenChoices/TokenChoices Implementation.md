@@ -90,7 +90,8 @@ This feature is designed to provide additional transparency and more granular co
 
 Categories are based in part on industry taxonomy frameworks and are intentionally simplified to make them understandable to consumers.
 
-A machine-readable JSON file provides the current list of categories to integrated companies. Access to this JSON file is provided to tool participants through the DAA.
+A machine-readable JSON file provides the current list of categories to integrated companies. The categories JSON file may be found here:  [https://files.aboutads.info/categories.json](https://files.aboutads.info/categories.json
+)
 
 ### Preference States
 
@@ -98,7 +99,7 @@ For each category, consumers may signal:
 
 | **Value** | **Meaning** |
 |----|----|
-| 0 | Limit / Opt-out of category |
+| 0 | Limit / opt-out of category |
 | 1 | Allow category |
 | - | No preference (default state; no category selected) |
 
@@ -181,7 +182,7 @@ Supported values include:
 pref=null
 pref=010-1--
 ```
-The position of each value in the string corresponds to a category defined in the TokenChoices category JSON taxonomy. Access to this JSON file is provided to program participants. 
+The position of each value in the string corresponds to a category defined in the categories JSON taxonomy, found here: [https://files.aboutads.info/categories.json](https://files.aboutads.info/categories.json)
 
 
 ## Request Format
@@ -262,7 +263,7 @@ Body:
 
 The preference string represents category selections made by the consumer.
 
-Category positions and definitions are available in JSON format. Please ask your DAA representative for access to the file.
+Category positions and definitions are available in JSON format, found here: [https://files.aboutads.info/categories.json](https://files.aboutads.info/categories.json)
 
 
 ### Optional Authentication Headers ###
@@ -315,7 +316,7 @@ Category preferences are currently provided on a best-effort basis as the ecosys
 
 **5. Where can companies retrieve the category taxonomy?**
 
-The current category list is available in machine-readable JSON format. This list can be used to map preference string positions to category definitions. Participants must contact the DAA to obtain access to this JSON file. Please reach out to Jamie Monaco (jamie@aboutads.info).
+The current category list is available in machine-readable JSON format. This list can be used to map preference string positions to category definitions. The categories JSON file can be found here: [https://files.aboutads.info/categories.json](https://files.aboutads.info/categories.json)
 
 **6. Can consumers submit multiple identifiers at once?**
 

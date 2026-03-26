@@ -124,7 +124,7 @@ Supported values include:
 
 | **Value** | **Meaning** |
 |----|----|
-| optout | Consumer requests to opt out of interest-based advertising using the submitted token identifier. |
+| opt-out | Consumer requests to opt out of interest-based advertising using the submitted token identifier. |
 | prefString | Consumer category preferences are provided in the pref parameter. |
 
 *Examples:*
@@ -191,7 +191,7 @@ TokenChoices sends requests to integrated companies using a standard HTTPS endpo
 
 Example request format:
 ```
-https://subdomain.company.com/pr.png?action=%action&idt=%idt&md5=%md5-ID&sha1=%sha1-ID&sha256=%sha256-ID&sha512=%sha512-ID&pref=%prefString
+https://subdomain.company.com/pr.png?action=%action&idt=%idt&md5=%md5-ID&sha1=%sha1-ID&sha256=%sha256-ID&sha512=%sha512-ID&UID2=%UID2-ID&pref=%prefString
 ```
 All company endpoints must support HTTPS.
 
@@ -201,6 +201,7 @@ TokenChoices supports the following hashing formats:
 - SHA1
 - SHA256
 - SHA512
+- UID2
 
 No clear-text email addresses or phone numbers are transmitted.
 
@@ -246,6 +247,7 @@ Example request sent when a consumer submits category preference signals.
 https://subdomain.company.com/pr.png?action=prefString&idt=email&md5=%md5-ID&sha1=%sha1-ID&sha256=%sha256-ID&sha512=%sha512-ID&pref=%prefString
 ```
 #### POST Example:
+
 Endpoint:
 ```
 https://subdomain.company.com/pr.png?action=prefString&idt=email
@@ -264,6 +266,8 @@ Body:
 The preference string represents category selections made by the consumer.
 
 Category positions and definitions are available in JSON format, found here: [https://files.aboutads.info/categories.json](https://files.aboutads.info/categories.json)
+
+The DAA can handle many different endpoint formats. Please discuss your endpoint formatting needs during onboarding.
 
 
 ### Optional Authentication Headers ###
@@ -287,6 +291,7 @@ TokenChoices currently supports the following hashing algorithms:
 - SHA1
 - SHA256
 - SHA512
+- UID2
 
 Additional hashing approaches may be supported during onboarding if required. 
 
@@ -324,7 +329,7 @@ No. The TokenChoices interface accepts only one email address or phone number pe
 
 **7. Can companies add authentication to their endpoints?**
 
-Yes. The DAA supports and recommends that participating companies protect their endpoints using authentication mechanisms such as API keys.
+Yes. The DAA supports and recommends that participating companies protect their endpoints using authentication mechanisms such as API keys. The DAA can handle many different endpoint formats. Please discuss your endpoint formatting needs during onboarding.
 
 **8. Are clear-text email addresses or phone numbers transmitted?**
 
@@ -342,13 +347,17 @@ No. TokenChoices does not retain consumer-submitted identifiers beyond operation
 
 TokenChoices incorporates several safeguards, including:
 
-- CAPTCHA validation during consumer submissions
+- CAPTCHA (reCAPTCHA) validation during consumer submissions
 - Verification of email or phone ownership (for example, one-time passwords or verification links)
 - Throttling mechanisms to limit automated requests
 
 Companies may also monitor submission volumes at their endpoints to detect potential abuse.
 
-**12. Can consumer choices be updated?**
+**12. Are there any recommended retry or error-handling practices?**
+
+When the DAA sends a GET or POST to your endpoint, we measure success as a 200 return code. However, sometimes we notice a fail return code, such as 404, meaning the URL is not found or 503 meaning the server is busy. Please consider adding error subroutines. For example, if your endpoint returns 503, you could save the request into a temporary queue and reprocess it when your server is no longer busy. If you add this kind of error subroutine, please tell the DAA team so we can stop reporting your endpoint responses as failures.
+
+**13. Can consumer choices be updated?**
 
 Yes. If a consumer revisits the TokenChoices interface and submits a new request, the most recent request may override previous submissions.
 
